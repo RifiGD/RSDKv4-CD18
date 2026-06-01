@@ -1434,10 +1434,10 @@ void ShowWebsite(int websiteID)
 }
 
 #if RETRO_USE_V6
-void PlayVideo(int unused, const char *videoName)
+void PlayVideo(int *unused, char *videoName)
 {
-    PrintLog("Loaded Video: \"%s\"", videoName);
-    // The day S3KO gets decompiled I'll make an mp4 video player
+    // nope, S3KO didn't get decompiled. dw guys (those who know)
+    PlayVideoFile(videoName);
 }
 #endif
 

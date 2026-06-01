@@ -240,9 +240,8 @@ inline void NativePlayerWaitingAds() { SetGlobalVariableByName("waitingAds.resul
 inline void NativeWaterPlayerWaitingAds() { SetGlobalVariableByName("waitingAds.water", 2); }
 
 #if RETRO_USE_V6
-// Native Function used in RSDKv6 for Sonic CD
-// It's just handled by the phone's native video player anyway, so we don't need to do anything here
-void PlayVideo(int unused, const char *videoName);
+// Native Function used in Sonic CD (2018)
+void PlayVideo(int *unused, char *videoName);
 #endif
 
 #if RETRO_REV03
