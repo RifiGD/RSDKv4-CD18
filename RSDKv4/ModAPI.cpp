@@ -464,6 +464,26 @@ void RefreshEngine()
         AddAchievement("Scrambled Egg", "Defeat Dr. Eggman's Boss\rAttack mode in under 7\rminutes");
         AddAchievement("Beat the Clock", "Complete the Time Attack\rmode in less than 45\rminutes");
     }
+#if RETRO_USE_V6
+    // These achievements are defined in the strings.xml file inside the APK...
+    // However, they go unused. The FTVP Menu doesn't even have an achievements section,
+    // the RSDK HW Menu doesn't create the Achievements Button,
+    // and the CD18 scripts never call the "SetAchievement" Native Function
+    else if (Engine.gameType == GAME_SONICCD) {
+        AddAchievement("88 Miles Per Hour", "Travel through time");
+        AddAchievement("Just One Hug Is Enough", "Get a hug from Amy");
+        AddAchievement("Paradise Found", "Complete a Zone in the Good Future");
+        AddAchievement("Take the High Road", "Pass the upper Signpost in\rCollision Chaos Zone 2");
+        AddAchievement("King of the Rings", "Collect 200 Rings");
+        AddAchievement("Statue Savior", "Find the angel statue in\rWacky Workbench");
+        AddAchievement("Heavy Metal", "Defeat Metal Sonic without\rgetting hurt");
+        AddAchievement("All Stages Clear!", "Finish the game");
+        AddAchievement("Treasure Hunter", "Collect all the Time Stones");
+        AddAchievement("Dr. Eggman Got Served", "Destroy Dr. Eggman’s\rfinal machine");
+        AddAchievement("Just in Time!", "Complete the Time Attack\rmode in under 25\rminutes");
+        AddAchievement("Savior of the Planet", "Destroy all the robot\rtransporters and Metal\rSonic holograms in the past");
+    }
+#endif
 
     SaveMods();
 
