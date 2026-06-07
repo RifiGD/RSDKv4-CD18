@@ -1,15 +1,5 @@
 #include "RetroEngine.hpp"
 
-
-#if RETRO_USE_V6
-void ClearTouches(){ // i am going mentally insane due to that 2018 build
-    //touchData._8_4_ = 0;
-    //touchData._12_4_ = 0;
-    //touchData._176_4_ = 0;
-    return;
-};
-#endif
-
 InputData keyPress = InputData();
 InputData keyDown  = InputData();
 

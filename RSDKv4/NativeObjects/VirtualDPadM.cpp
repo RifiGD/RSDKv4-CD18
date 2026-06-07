@@ -13,7 +13,7 @@ void VirtualDPadM_Create(void *objPtr)
     self->pauseX   = SCREEN_CENTERX - 76.0f;
     self->pauseX_S = SCREEN_CENTERX - 52.0f;
 
-    float dpadSize  = saveGame->vDPadSize * (1 / 256.0f);
+    float dpadSize  = saveRAM[SAVE_VDPADSIZE]* (1 / 256.0f);
     self->moveSize  = dpadSize;
     self->jumpSize  = self->moveSize * 0.75;
     self->textureID = LoadTexture("Data/Game/Menu/VirtualDPadM.png", 3);
@@ -25,17 +25,17 @@ void VirtualDPadM_Main(void *objPtr)
     int physicalControls = GetGlobalVariableByName("options.physicalControls");
 
     if (physicalControls) {
-        if (self->alpha < saveGame->vDPadOpacity) {
+        if (self->alpha < saveRAM[SAVE_VDPADOPACITY]) {
             self->alpha += 4;
             if (self->pauseAlpha < 0xFF) {
-                self->pauseAlpha = (self->alpha << 8) / saveGame->vDPadOpacity;
+                self->pauseAlpha = (self->alpha << 8) / saveRAM[SAVE_VDPADOPACITY];
             }
         }
     }
     else {
         if (self->alpha > 0) {
             self->alpha -= 4;
-            self->pauseAlpha = (self->alpha << 8) / saveGame->vDPadOpacity;
+            self->pauseAlpha = (self->alpha << 8) / saveRAM[SAVE_VDPADOPACITY];
         }
     }
 
@@ -44,7 +44,7 @@ void VirtualDPadM_Main(void *objPtr)
         RenderImage(self->moveX, self->moveY, 160.0, self->moveSize, self->moveSize, 128.0, 128.0, 256.0, 256.0, 0.0, 0.0, self->alpha,
                     self->textureID);
 
-        if (self->alpha == saveGame->vDPadOpacity) {
+        if (self->alpha == saveRAM[SAVE_VDPADOPACITY]) {
             if (keyDown.up) {
                 RenderImage(self->moveX, self->moveY, 160.0, self->moveSize, self->moveSize, 25.0, 30.0, 50.0, 55.0, 24.0, 282.0, self->alpha,
                             self->textureID);
@@ -65,7 +65,7 @@ void VirtualDPadM_Main(void *objPtr)
 
         int alpha  = 0xFF;
         float sprY = 0;
-        if (keyDown.A && self->alpha == saveGame->vDPadOpacity) {
+        if (keyDown.A && self->alpha == saveRAM[SAVE_VDPADOPACITY]) {
             alpha = 255;
             sprY  = 256.0;
         }

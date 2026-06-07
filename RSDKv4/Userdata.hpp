@@ -19,6 +19,49 @@
 
 #define unused(x) (void)x
 
+
+// ok im just doing shit atp :broken_heart:
+enum SAVEFILE_OFFSETS{
+    SAVEFILE_CHARACTER_ID,
+    SAVEFILE_LIVES,
+    SAVEFILE_SCORE,
+    SAVEFILE_SCOREBONUS,
+    SAVEFILE_STAGEID,
+    SAVEFILE_EMERALDS,
+    SAVEFILE_SPECIALSTAGEID,
+    SAVEFILE_UNUSED,
+};
+
+enum SAVERAM_OFFSETS {
+    SAVE_INIT           = 32,
+    SAVE_MUSVOL         = 33,
+    SAVE_SFXVOL         = 34,
+    SAVE_SPINDASH       = 35,
+    SAVE_BOXREGION      = 36,
+    SAVE_VDPADSIZE      = 37,
+    SAVE_VDPADOPACITY   = 38,
+    SAVE_VDPADX_MOVE    = 39,
+    SAVE_VDPADY_MOVE    = 40,
+    SAVE_VDPADX_JUMP    = 41,
+    SAVE_VDPADY_JUMP    = 42,
+    SAVE_TAILSUNLOCKED  = 43,
+    SAVE_KNUXUNLOCKED   = 44,
+    SAVE_UNLOCKEDACTS   = 45,
+    SAVE_UNLOCKEDHPZ    = 46,
+
+    // the weird one
+    SAVE_INITIALOFFSET  = 4000,
+};
+
+// used with GET_IDX_SO, will make sense in PlayerSelectScreen
+enum IDX_SO_INPUTS {
+    OFFSET_UNKNOWN_0     = 15,
+    OFFSET_TAILSUNLOCKED = 16,
+    OFFSET_KNUXUNLOCKED  = 17,
+    OFFSET_UNKNOWN_1     = 18,
+};
+
+
 struct SaveFile {
     int characterID;    // Value 0/8/16/24
     int lives;          // Value 1/9/17/25
@@ -63,14 +106,14 @@ struct SaveGame {
     int records[0x80];   // Values 64-192
     int padding[0x73F];  // Values 193-2047
     int customSS[0x400]; // Values 2048-3072
-#if RETRO_USE_V6
+
     int initialSaveOffset = 4000; // this is taken from v6's InitNativeObjectSystem, but it is extremely weird
 
     // CD Offset returns from GET_IDX_SO()
     int vDPad_CD = 1000; // Handles values 37-42, which correspond to VirtualDPad
     //int tailsUnlockedCD = boxRegion; // GET_IDX_SO(0x10) in PlayerSelectScreen
 
-#endif
+
 };
 
 enum OnlineMenuTypes {
@@ -169,10 +212,9 @@ extern bool useSGame;
 bool ReadSaveRAMData();
 bool WriteSaveRAMData();
 
-#if RETRO_USE_V6
 // Save File offset function for handling multiple save files
 int GET_IDX_SO(int offset);
-#endif
+
 
 #if !RETRO_USE_ORIGINAL_CODE
 void InitUserdata();
@@ -239,10 +281,8 @@ void ShowWebsite(int websiteID);
 inline void NativePlayerWaitingAds() { SetGlobalVariableByName("waitingAds.result", 2); }
 inline void NativeWaterPlayerWaitingAds() { SetGlobalVariableByName("waitingAds.water", 2); }
 
-#if RETRO_USE_V6
 // Native Function used in Sonic CD (2018)
 void PlayVideo(int *unused, char *videoName);
-#endif
 
 #if RETRO_REV03
 void NotifyCallback(int *callback, int *param1, int *param2, int *param3);

@@ -521,12 +521,7 @@ const FunctionInfo functions[] = {
     FunctionInfo("LoadFontFile", 1),
     FunctionInfo("LoadTextFile", 3),
 #else
-#if !RETRO_USE_V6
     FunctionInfo("LoadTextFile", 2),
-#else
-    // explanation in ProcessScript
-    FunctionInfo("LoadTextFile", 3),
-#endif
 #endif
     FunctionInfo("GetTextInfo", 5),
 #if !RETRO_REV02
@@ -5346,21 +5341,16 @@ void ProcessScript(int scriptCodeStart, int jumpTableStart, byte scriptEvent)
             }
 #endif
             case FUNC_LOADTEXTFILE: {
-            #if !RETRO_USE_V6
                 opcodeSize     = 0;
-            #endif
                 TextMenu *menu = &gameMenu[scriptEng.operands[0]];
 #if !RETRO_REV02
                 LoadTextFile(menu, scriptText, scriptEng.operands[2] != 0);
 #else
-            #if !RETRO_USE_V6
-                LoadTextFile(menu, scriptText, false);
-            #else
+
                 // uhmm this can technically break any Bytecode ...
                 // that uses LTF with 2 Params
                 // but S1/S2 REV02 onwards don't use it, so we're fine
                 LoadTextFile(menu, scriptText, scriptEng.operands[2]);
-            #endif
 #endif
                 break;
             }

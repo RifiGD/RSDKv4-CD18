@@ -16,39 +16,13 @@ void MenuControl_Create(void *objPtr)
     self->buttonFlags[self->buttonCount] = BUTTON_TIMEATTACK;
     self->buttonCount++;
 
-#if !RETRO_USE_V6
-#if RETRO_USE_MOD_LOADER
-    int vsID = GetSceneID(STAGELIST_PRESENTATION, "2P VS");
-    if (vsID != -1) {
-#else
-    if (Engine.gameType == GAME_SONIC2) {
-#endif
-        self->buttons[self->buttonCount]     = (NativeEntity_AchievementsButton *)CREATE_ENTITY(MultiplayerButton);
-        self->buttonFlags[self->buttonCount] = BUTTON_MULTIPLAYER;
-        self->buttonCount++;
-    }
-
-    if (Engine.onlineActive) {
-        self->buttons[self->buttonCount]     = CREATE_ENTITY(AchievementsButton);
-        self->buttonFlags[self->buttonCount] = BUTTON_ACHIEVEMENTS;
-        self->buttonCount++;
-
-        self->buttons[self->buttonCount]     = (NativeEntity_AchievementsButton *)CREATE_ENTITY(LeaderboardsButton);
-        self->buttonFlags[self->buttonCount] = BUTTON_LEADERBOARDS;
-        self->buttonCount++;
-    }
-
-    self->buttons[self->buttonCount]     = (NativeEntity_AchievementsButton *)CREATE_ENTITY(OptionsButton);
-    self->buttonFlags[self->buttonCount] = BUTTON_OPTIONS;
-    self->buttonCount++;
-#endif
-
     self->backButton          = CREATE_ENTITY(BackButton);
     self->backButton->visible = true;
 
     self->backButton->x       = 240.0;
     self->backButton->y       = -160.0;
     self->backButton->z       = 0.0;
+
 
     self->segaIDButton       = CREATE_ENTITY(SegaIDButton);
     self->segaIDButton->y    = -92.0;
@@ -75,9 +49,6 @@ void MenuControl_Create(void *objPtr)
     if (Engine.gameDeviceType == RETRO_STANDARD)
         usePhysicalControls = true;
     BackupNativeObjects();
-    #if RETRO_USE_V6
-    ClearTouches();
-    #endif
 }
 void MenuControl_Main(void *objPtr)
 {
@@ -285,16 +256,12 @@ void MenuControl_Main(void *objPtr)
                             PlaySfxByName("Select", false);
                         }
                         for (int i = 0; i < self->buttonCount; ++i) {
-                        #if RETRO_USE_V6
                             self->buttons[i]->alpha = 100;
-                        #endif
                             self->buttons[i]->g = 0xFF;
                         }
 
                         self->buttons[self->buttonID]->g = 0xC0;
-                        #if RETRO_USE_V6
                         self->buttons[self->buttonID]->alpha = 255;
-                        #endif    
 
                     }
 
@@ -348,15 +315,6 @@ void MenuControl_Main(void *objPtr)
                         break;
 
                     case BUTTON_TIMEATTACK:
-                    #if !RETRO_USE_V6
-                        self->state                  = MENUCONTROL_STATE_ENTERSUBMENU;
-                        self->autoButtonMoveVelocity = 0.0;
-                        button->g                    = 0xFF;
-                        button->labelPtr->state      = TEXTLABEL_STATE_NONE;
-                        self->backButton->visible    = true;
-                        CREATE_ENTITY(TimeAttack);
-                    #else
-                        
                         if (Engine.gameType == GAME_SONICCD){
                             self->state             = MENUCONTROL_STATE_NONE;
                             button->labelPtr->state = TEXTLABEL_STATE_IDLE;
@@ -397,7 +355,6 @@ void MenuControl_Main(void *objPtr)
                             self->backButton->visible    = true;
 
                         }
-                    #endif
                         break;
 
                     case BUTTON_MULTIPLAYER:
@@ -591,17 +548,17 @@ void MenuControl_Main(void *objPtr)
             }
             break;
         }
-    #if RETRO_USE_V6
         case MENUCONTROL_STATE_AUTOMAIN: {
             // literally why do we need a new state for this
             self->state     = MENUCONTROL_STATE_MAIN;
+            break;
         }
         case MENUCONTROL_STATE_AUTOACTION: {
             // Fun Fact: this is actually used by C.W Splash
             self->state      = MENUCONTROL_STATE_ACTION;
             self->stateInput = MENUCONTROL_STATEINPUT_CHECKTOUCH;
+            break;
         }
-    #endif
 
         default: break;
     }

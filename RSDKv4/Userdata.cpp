@@ -42,79 +42,6 @@ int disableFocusPause_Config = 0;
 
 bool useSGame = false;
 
-#if !RETRO_USE_V6
-bool ReadSaveRAMData()
-{
-    useSGame = false;
-    char buffer[0x180];
-#if RETRO_USE_MOD_LOADER
-#if RETRO_PLATFORM == RETRO_UWP
-    if (!usingCWD)
-        sprintf(buffer, "%s/%sSData.bin", redirectSave ? modsPath : getResourcesPath(), savePath);
-    else
-        sprintf(buffer, "%s%sSData.bin", redirectSave ? modsPath : gamePath, savePath);
-#elif RETRO_PLATFORM == RETRO_OSX
-    sprintf(buffer, "%s/%sSData.bin", redirectSave ? modsPath : gamePath, savePath);
-#elif RETRO_PLATFORM == RETRO_iOS
-    sprintf(buffer, "%s/%sSData.bin", redirectSave ? modsPath : getDocumentsPath(), savePath);
-#else
-    sprintf(buffer, "%s%sSData.bin", redirectSave ? modsPath : gamePath, savePath);
-#endif
-#else
-#if RETRO_PLATFORM == RETRO_UWP
-    if (!usingCWD)
-        sprintf(buffer, "%s/%sSData.bin", getResourcesPath(), savePath);
-    else
-        sprintf(buffer, "%s%sSData.bin", gamePath, savePath);
-#elif RETRO_PLATFORM == RETRO_OSX
-    sprintf(buffer, "%s/%sSData.bin", gamePath, savePath);
-#elif RETRO_PLATFORM == RETRO_iOS
-    sprintf(buffer, "%s/%sSData.bin", getDocumentsPath(), savePath);
-#else
-    sprintf(buffer, "%s%sSData.bin", gamePath, savePath);
-#endif
-#endif
-
-    FileIO *saveFile = fOpen(buffer, "rb");
-    if (!saveFile) {
-#if RETRO_USE_MOD_LOADER
-#if RETRO_PLATFORM == RETRO_UWP
-        if (!usingCWD)
-            sprintf(buffer, "%s/%sSGame.bin", redirectSave ? modsPath : getResourcesPath(), savePath);
-        else
-            sprintf(buffer, "%s%sSGame.bin", redirectSave ? modsPath : gamePath, savePath);
-#elif RETRO_PLATFORM == RETRO_OSX
-        sprintf(buffer, "%s/%sSGame.bin", redirectSave ? modsPath : gamePath, savePath);
-#elif RETRO_PLATFORM == RETRO_iOS
-        sprintf(buffer, "%s/%sSGame.bin", redirectSave ? modsPath : getDocumentsPath(), savePath);
-#else
-        sprintf(buffer, "%s%sSGame.bin", redirectSave ? modsPath : gamePath, savePath);
-#endif
-#else
-#if RETRO_PLATFORM == RETRO_UWP
-        if (!usingCWD)
-            sprintf(buffer, "%s/%sSGame.bin", getResourcesPath(), savePath);
-        else
-            sprintf(buffer, "%s%sSGame.bin", gamePath, savePath);
-#elif RETRO_PLATFORM == RETRO_OSX
-        sprintf(buffer, "%s/%sSGame.bin", gamePath, savePath);
-#elif RETRO_PLATFORM == RETRO_iOS
-        sprintf(buffer, "%s/%sSGame.bin", getDocumentsPath(), savePath);
-#else
-        sprintf(buffer, "%s%sSGame.bin", gamePath, savePath);
-#endif
-#endif
-
-        saveFile = fOpen(buffer, "rb");
-        if (!saveFile)
-            return false;
-        useSGame = true;
-    }
-    fRead(saveRAM, sizeof(int), SAVEDATA_SIZE, saveFile);
-    fClose(saveFile);
-    return true;
-}
-#else
 bool ReadSaveRAMData()
 {
     useSGame = true;
@@ -199,80 +126,7 @@ bool ReadSaveRAMData()
     fClose(saveFile);
     return true;
 }
-#endif
 
-#if !RETRO_USE_V6
-bool WriteSaveRAMData()
-{
-    char buffer[0x180];
-
-    if (!useSGame) {
-#if RETRO_USE_MOD_LOADER
-#if RETRO_PLATFORM == RETRO_UWP
-        if (!usingCWD)
-            sprintf(buffer, "%s/%sSData.bin", redirectSave ? modsPath : getResourcesPath(), savePath);
-        else
-            sprintf(buffer, "%s%sSData.bin", redirectSave ? modsPath : gamePath, savePath);
-#elif RETRO_PLATFORM == RETRO_OSX
-        sprintf(buffer, "%s/%sSData.bin", redirectSave ? modsPath : gamePath, savePath);
-#elif RETRO_PLATFORM == RETRO_iOS
-        sprintf(buffer, "%s/%sSData.bin", redirectSave ? modsPath : getDocumentsPath(), savePath);
-#else
-        sprintf(buffer, "%s%sSData.bin", redirectSave ? modsPath : gamePath, savePath);
-#endif
-#else
-#if RETRO_PLATFORM == RETRO_UWP
-        if (!usingCWD)
-            sprintf(buffer, "%s/%sSData.bin", getResourcesPath(), savePath);
-        else
-            sprintf(buffer, "%s%sSData.bin", gamePath, savePath);
-#elif RETRO_PLATFORM == RETRO_OSX
-        sprintf(buffer, "%s/%sSData.bin", gamePath, savePath);
-#elif RETRO_PLATFORM == RETRO_iOS
-        sprintf(buffer, "%s/%sSData.bin", getDocumentsPath(), savePath);
-#else
-        sprintf(buffer, "%s%sSData.bin", gamePath, savePath);
-#endif
-#endif
-    }
-    else {
-#if RETRO_USE_MOD_LOADER
-#if RETRO_PLATFORM == RETRO_UWP
-        if (!usingCWD)
-            sprintf(buffer, "%s/%sSGame.bin", redirectSave ? modsPath : getResourcesPath(), savePath);
-        else
-            sprintf(buffer, "%s%sSGame.bin", redirectSave ? modsPath : gamePath, savePath);
-#elif RETRO_PLATFORM == RETRO_OSX
-        sprintf(buffer, "%s/%sSGame.bin", redirectSave ? modsPath : gamePath, savePath);
-#elif RETRO_PLATFORM == RETRO_iOS
-        sprintf(buffer, "%s/%sSGame.bin", redirectSave ? modsPath : getDocumentsPath(), savePath);
-#else
-        sprintf(buffer, "%s%sSGame.bin", redirectSave ? modsPath : gamePath, savePath);
-#endif
-#else
-#if RETRO_PLATFORM == RETRO_UWP
-        if (!usingCWD)
-            sprintf(buffer, "%s/%sSGame.bin", getResourcesPath(), savePath);
-        else
-            sprintf(buffer, "%s%sSGame.bin", gamePath, savePath);
-#elif RETRO_PLATFORM == RETRO_OSX
-        sprintf(buffer, "%s/%sSGame.bin", gamePath, savePath);
-#elif RETRO_PLATFORM == RETRO_iOS
-        sprintf(buffer, "%s/%sSGame.bin", getDocumentsPath(), savePath);
-#else
-        sprintf(buffer, "%s%sSGame.bin", gamePath, savePath);
-#endif
-#endif
-    }
-
-    FileIO *saveFile = fOpen(buffer, "wb");
-    if (!saveFile)
-        return false;
-    fWrite(saveRAM, sizeof(int), SAVEDATA_SIZE, saveFile);
-    fClose(saveFile);
-    return true;
-}
-#else
 bool WriteSaveRAMData()
 {
     char buffer[0x180];
@@ -356,9 +210,7 @@ bool WriteSaveRAMData()
     fClose(saveFile);
     return true;
 }
-#endif
 
-#if RETRO_USE_V6
 // fuckass function :broken_heart:
 int GET_IDX_SO(int offset){
     switch(offset){
@@ -440,7 +292,7 @@ int GET_IDX_SO(int offset){
             return offset - 0xf; // offset - 15
     } // weirdass function
 }
-#endif
+
 
 void InitUserdata()
 {
@@ -503,11 +355,9 @@ void InitUserdata()
         ini.SetInteger("Dev", "FastForwardSpeed", Engine.fastForwardSpeed = 8);
         Engine.startList_Game  = Engine.startList;
         Engine.startStage_Game = Engine.startStage;
-        #if !RETRO_USE_V6
-        ini.SetBool("Dev", "UseHQModes", Engine.useHQModes = true);
-        #else
+
         ini.SetBool("Dev", "UseHQModes", Engine.useHQModes = false);
-        #endif
+
         ini.SetString("Dev", "DataFile", (char *)"Data.rsdk");
         StrCopy(Engine.dataFile[0], "Data.rsdk");
         if (!StrComp(Engine.dataFile[1], "")) {
@@ -1433,13 +1283,13 @@ void ShowWebsite(int websiteID)
     }
 }
 
-#if RETRO_USE_V6
+
 void PlayVideo(int *unused, char *videoName)
 {
     // nope, S3KO didn't get decompiled. dw guys (those who know)
     PlayVideoFile(videoName);
 }
-#endif
+
 
 #if RETRO_REV03
 enum NotifyCallbackIDs {

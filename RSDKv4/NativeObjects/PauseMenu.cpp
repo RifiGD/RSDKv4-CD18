@@ -325,15 +325,7 @@ void PauseMenu_Main(void *objPtr)
                         self->state = PAUSEMENU_STATE_RESTART;
                         break;
                     case PMB_SETTINGS:
-                    #if !RETRO_USE_V6
-                        self->state        = PAUSEMENU_STATE_ENTERSUBMENU;
-                        self->rotInc       = 0.0;
-                        self->renderRotMax = DegreesToRad(-90.0);
-                        for (int i = 0; i < pauseMenuButtonCount; ++i) {
-                            self->rotMax[i]     = DegreesToRad(-90.0);
-                            self->buttonRotY[i] = 0.02 * (i + 1);
-                        }
-                    #else
+
                         if (Engine.gameType != GAME_SONICCD){
                             self->state        = PAUSEMENU_STATE_ENTERSUBMENU;
                             self->rotInc       = 0.0;
@@ -349,7 +341,7 @@ void PauseMenu_Main(void *objPtr)
                             // and probably never will
                             self->state = PAUSEMENU_STATE_MAIN;
                         }
-                    #endif
+
                         break;
                     case PMB_EXIT:
                         self->dialog = CREATE_ENTITY(DialogPanel);

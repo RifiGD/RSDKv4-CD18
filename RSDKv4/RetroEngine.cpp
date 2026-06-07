@@ -420,11 +420,11 @@ void RetroEngine::Init()
 #if !RETRO_USE_ORIGINAL_CODE
     gameType = GAME_SONIC2;
 
-#if RETRO_USE_V6
+
     if (strstr(gameWindowText, "Sonic CD")) {
         gameType = GAME_SONICCD;
     } else
-#endif
+
 #if RETRO_USE_MOD_LOADER
     if (strstr(gameWindowText, "Sonic 1") || forceSonic1) {
 #else
@@ -481,7 +481,7 @@ void RetroEngine::Init()
         AddAchievement("Scrambled Egg", "Defeat Dr. Eggman's Boss\rAttack mode in under 7\rminutes");
         AddAchievement("Beat the Clock", "Complete the Time Attack\rmode in less than 45\rminutes");
     }
-#if RETRO_USE_V6
+
     // These achievements are defined in the strings.xml file inside the APK...
     // However, they go unused. The FTVP Menu doesn't even have an achievements section,
     // the RSDK HW Menu doesn't create the Achievements Button,
@@ -500,7 +500,7 @@ void RetroEngine::Init()
         AddAchievement("Just in Time!", "Complete the Time Attack\rmode in under 25\rminutes");
         AddAchievement("Savior of the Planet", "Destroy all the robot\rtransporters and Metal\rSonic holograms in the past");
     }
-#endif
+
 
     if (skipStart)
         Engine.gameMode = ENGINE_MAINGAME;
@@ -1296,19 +1296,8 @@ bool RetroEngine::LoadGameConfig(const char *filePath)
     AddNativeFunction("ReceiveEntity", ReceiveEntity);
     AddNativeFunction("ReceiveValue", ReceiveValue);
     AddNativeFunction("TransmitGlobal", TransmitGlobal);
-#if !RETRO_USE_V6
-    AddNativeFunction("ShowPromoPopup", ShowPromoPopup);
-#endif
 
-#if RETRO_USE_V6
     AddNativeFunction("PlayVideo", PlayVideo);
-#endif
-
-    // Introduced in the Sega Forever versions of S1 (3.9.0) and S2 (1.7.0)
-#if !RETRO_USE_V6
-    AddNativeFunction("NativePlayerWaitingAds", NativePlayerWaitingAds);
-    AddNativeFunction("NativeWaterPlayerWaitingAds", NativeWaterPlayerWaitingAds);
-#endif
 
 #if RETRO_REV03
     AddNativeFunction("NotifyCallback", NotifyCallback);

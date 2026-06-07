@@ -71,40 +71,28 @@ void PlayerSelectScreen_Main(void *objPtr)
             CheckKeyDown(&keyDown);
             CheckKeyPress(&keyPress);
             SetRenderMatrix(&self->matrixTemp);
-            #if RETRO_USE_V6
-            if (Engine.gameType == GAME_SONICCD)
-                saveGame->knuxUnlocked = false;
-            #endif
+            
             if (usePhysicalControls) {
                 if (touches > 0) {
                     usePhysicalControls = false;
                 }
                 else {
                     if (keyPress.left) {
-                        if (saveGame->knuxUnlocked) {
+                        if (saveRAM[GET_IDX_SO(OFFSET_KNUXUNLOCKED)]) {
                             PlaySfxByName("Menu Move", false);
                             PlaySfxByName("MenuButton", false);
 
                             if (--self->playerID < SAVESEL_SONIC)
-                            #if RETRO_USE_V6
                                 if (Engine.gameType == GAME_SONICCD){
                                     self->playerID = SAVESEL_TAILS;
                                 }
                                 else{
                                     self->playerID = SAVESEL_KNUX;
                                 }
-                            #else
-                                self->playerID = SAVESEL_KNUX;
-                            #endif
                         }
-                        #if !RETRO_USE_V6
-                        else if (saveGame->tailsUnlocked) {
-                        #else
-                        else if (saveGame->tailsUnlocked || saveGame->boxRegion){
-                        #endif
+                        else if (saveRAM[GET_IDX_SO(OFFSET_TAILSUNLOCKED)]){
                             PlaySfxByName("Menu Move", false);
                             PlaySfxByName("MenuButton", false);
-                        #if RETRO_USE_V6
                         if (Engine.gameType != GAME_SONICCD){
                             if (--self->playerID < SAVESEL_SONIC)
                                 self->playerID = SAVESEL_TAILS;
@@ -113,22 +101,15 @@ void PlayerSelectScreen_Main(void *objPtr)
                             if (--self->playerID > SAVESEL_SONIC)
                                 self->playerID = SAVESEL_TAILS;
                         }
-                        #else
-                            if (--self->playerID > SAVESEL_SONIC)
-                                self->playerID = SAVESEL_TAILS;
-                        #endif
                                 
                         }
 
                     }
                     else if (keyPress.right) {
-                        if (saveGame->knuxUnlocked) {
+                        if (saveRAM[GET_IDX_SO(OFFSET_KNUXUNLOCKED)]) {
                             PlaySfxByName("Menu Move", false);
                             PlaySfxByName("MenuButton", false);
-                        #if !RETRO_USE_V6
-                            if (++self->playerID > SAVESEL_KNUX)
-                                self->playerID = SAVESEL_SONIC;
-                        #else
+
                             if (Engine.gameType != GAME_SONICCD){
                                 if (++self->playerID > SAVESEL_KNUX)
                                     self->playerID = SAVESEL_SONIC;
@@ -137,13 +118,11 @@ void PlayerSelectScreen_Main(void *objPtr)
                                 if (++self->playerID > SAVESEL_TAILS)
                                     self->playerID = SAVESEL_SONIC;
                             }
-                        #endif
+
                         }
-                        #if !RETRO_USE_V6
-                        else if (saveGame->tailsUnlocked) {
-                        #else
-                        else if (saveGame->tailsUnlocked || saveGame->boxRegion){
-                        #endif
+
+                        else if (saveRAM[GET_IDX_SO(OFFSET_TAILSUNLOCKED)]){
+
                             PlaySfxByName("Menu Move", false);
                             PlaySfxByName("MenuButton", false);
 
@@ -154,12 +133,12 @@ void PlayerSelectScreen_Main(void *objPtr)
                             self->playerID = SAVESEL_SONIC;
                         }
                     }
-                    #if RETRO_USE_V6
+
                     // Logic for skipping Sonic + Tails in Sonic CD
                     if (Engine.gameType == GAME_SONICCD) {
 
                         if (keyPress.right) {
-                            if (saveGame->tailsUnlocked || saveGame->boxRegion) {
+                            if (saveRAM[GET_IDX_SO(OFFSET_TAILSUNLOCKED)]) {
                                 // skip S+T
                                 if (self->playerID == SAVESEL_ST) {
                                     self->playerID = SAVESEL_TAILS;
@@ -173,7 +152,7 @@ void PlayerSelectScreen_Main(void *objPtr)
                             }
                         }
                         else if (keyPress.left) {
-                            if (saveGame->tailsUnlocked || saveGame->boxRegion) {
+                            if (saveRAM[GET_IDX_SO(OFFSET_TAILSUNLOCKED)]) {
 
                                 self->playerID--;
                                 // skip S+T
@@ -188,8 +167,6 @@ void PlayerSelectScreen_Main(void *objPtr)
                             }
                         }
                     }
-                    #endif
-
 
                     if (keyPress.start || keyPress.A) {
                         PlaySfxByName("Menu Select", false);
@@ -214,11 +191,7 @@ void PlayerSelectScreen_Main(void *objPtr)
                     else {
                         self->playerID = SAVESEL_SONIC;
                     }
-                    #if !RETRO_USE_V6
-                    if (saveGame->tailsUnlocked) {
-                    #else
-                    if (saveGame->tailsUnlocked || saveGame->boxRegion){
-                    #endif
+                    if (saveRAM[GET_IDX_SO(OFFSET_TAILSUNLOCKED)]){
                         if (CheckTouchRect(-84.0, -64.0, 16.0, 16.0) < 0) {
                             if (self->playerID == SAVESEL_ST)
                                 self->playerID = SAVESEL_SONIC;
@@ -234,7 +207,7 @@ void PlayerSelectScreen_Main(void *objPtr)
                             self->playerID = SAVESEL_TAILS;
                         }
                     }
-                    if (saveGame->knuxUnlocked) {
+                    if (saveRAM[GET_IDX_SO(OFFSET_KNUXUNLOCKED)]) {
                         if (CheckTouchRect(88.0, 24.0, 40.0, 40.0) < 0) {
                             if (self->playerID == SAVESEL_KNUX)
                                 self->playerID = SAVESEL_NONE;
@@ -292,33 +265,21 @@ void PlayerSelectScreen_Main(void *objPtr)
                     SetGlobalVariableByName("options.gameMode", 1);
 
                     switch (self->playerID) {
-                        case SAVESEL_SONIC: saveGame->files[saveSel->selectedButton - 1].characterID = 0; break;
-                        case SAVESEL_TAILS: saveGame->files[saveSel->selectedButton - 1].characterID = 1; break;
-                        case SAVESEL_KNUX: saveGame->files[saveSel->selectedButton - 1].characterID = 2; break;
-                        case SAVESEL_ST: saveGame->files[saveSel->selectedButton - 1].characterID = 3; break;
+                        case SAVESEL_SONIC: saveRAM[((saveSel->selectedButton - 1) * 8) + GET_IDX_SO(SAVEFILE_CHARACTER_ID)] = 0; break;
+                        case SAVESEL_TAILS: saveRAM[((saveSel->selectedButton - 1) * 8) + GET_IDX_SO(SAVEFILE_CHARACTER_ID)] = 1; break;
+                        case SAVESEL_KNUX: saveRAM[((saveSel->selectedButton - 1) * 8) + GET_IDX_SO(SAVEFILE_CHARACTER_ID)] = 2; break;
+                        case SAVESEL_ST: saveRAM[((saveSel->selectedButton - 1) * 8) + GET_IDX_SO(SAVEFILE_CHARACTER_ID)] = 3; break;
                     }
 
-                    saveGame->files[saveSel->selectedButton - 1].lives          = 3;
-                    saveGame->files[saveSel->selectedButton - 1].score          = 0;
-                    #if !RETRO_USE_V6
-                    saveGame->files[saveSel->selectedButton - 1].scoreBonus     = 500000;
-                    saveGame->files[saveSel->selectedButton - 1].stageID        = 1;
-                    saveGame->files[saveSel->selectedButton - 1].emeralds       = 0;
-                    saveGame->files[saveSel->selectedButton - 1].specialStageID = 0;
-                    #else
-                    if (Engine.gameType != GAME_SONICCD){
-                        saveGame->files[saveSel->selectedButton - 1].scoreBonus     = 500000;
-                        saveGame->files[saveSel->selectedButton - 1].stageID        = 1;
-                        saveGame->files[saveSel->selectedButton - 1].emeralds       = 0;
-                        saveGame->files[saveSel->selectedButton - 1].specialStageID = 0;                        
-                    }
-                    else{
-                        saveGame->files[saveSel->selectedButton - 1].specialStageID     = 500000;
-                        saveGame->files[saveSel->selectedButton - 1].scoreBonus         = 1;
-                        saveGame->files[saveSel->selectedButton - 1].stageID            = 0;
-                        saveGame->files[saveSel->selectedButton - 1].emeralds           = 0;
-                    }
-                    #endif
+                    saveRAM[((saveSel->selectedButton - 1) * 8) + GET_IDX_SO(SAVEFILE_LIVES)]          = 3;
+                    saveRAM[((saveSel->selectedButton - 1) * 8) + GET_IDX_SO(SAVEFILE_SCORE)]          = 0;
+
+                    // if (Engine.gameType != GAME_SONICCD){
+                    saveRAM[((saveSel->selectedButton - 1) * 8) + GET_IDX_SO(SAVEFILE_SCOREBONUS)]      = 50000;
+                    saveRAM[((saveSel->selectedButton - 1) * 8) + GET_IDX_SO(SAVEFILE_STAGEID)]         = 1;
+                    saveRAM[((saveSel->selectedButton - 1) * 8) + GET_IDX_SO(SAVEFILE_EMERALDS)]        = 0;
+                    saveRAM[((saveSel->selectedButton - 1) * 8) + GET_IDX_SO(SAVEFILE_SPECIALSTAGEID)]  = 0;                        
+
                     WriteSaveRAMData();
                 }
                 SetGlobalVariableByName("options.stageSelectFlag", 0);
@@ -330,14 +291,14 @@ void PlayerSelectScreen_Main(void *objPtr)
                 SetGlobalVariableByName("specialStage.nextZone", 0);
                 SetGlobalVariableByName("lampPostID", 0);
                 SetGlobalVariableByName("starPostID", 0);
-#if RETRO_USE_V6
-                if (Engine.gameType == GAME_SONICCD){
                 SetGlobalVariableByName("timeAttack.result", 0);
+
+                if (Engine.gameType == GAME_SONICCD){
                 SetGlobalVariableByName("specialStage.timeStones",0);
                 SetGlobalVariableByName("lampPostID",0);
                 SetGlobalVariableByName("starPostID",0);
                 }
-#endif
+
                 debugMode = false;
 
                 int charID = 0;
@@ -407,69 +368,34 @@ void PlayerSelectScreen_Main(void *objPtr)
     }
     else {
         SetRenderVertexColor(0, 0x80, 0xFF);
-        #if !RETRO_USE_V6
-        RenderImage(0.0, -12.0, 8.0, 0.3, 0.3, 128.0, 128.0, 256.0, 256.0, 256.0, 256.0, 255, self->texturePlayerSel);
-        #else
         RenderImage(88.0, 28.0, 8.0, 0.3, 0.3, 128.0, 128.0, 256.0, 256.0, 256.0, 256.0, 0xFF, self->texturePlayerSel);
-        #endif
     }
     if (self->playerID == SAVESEL_TAILS && usePhysicalControls) {
-    #if !RETRO_USE_V6
-        RenderImage(0.0, -12.0, 8.0, 0.325, 0.325, 128.0, 128.0, 256.0, 256.0, 256.0, 256.0, 0xFF, self->texturePlayerSel);
-    #else
         if (Engine.gameType != GAME_SONICCD){
             RenderImage(0.0, -12.0, 8.0, 0.325, 0.325, 128.0, 128.0, 256.0, 256.0, 256.0, 256.0, 0xFF, self->texturePlayerSel);
         }
         else{
             RenderImage(88.0, 28.0, 8.0, 0.325, 0.325, 128.0, 128.0, 256.0, 256.0, 256.0, 256.0, 0xFF, self->texturePlayerSel);
         }
-    #endif
     }
     else {
-        #if !RETRO_USE_V6
-        RenderImage(0.0, -12.0, 8.0, 0.3, 0.3, 128.0, 128.0, 256.0, 256.0, 256.0, 256.0, 0xFF, self->texturePlayerSel);
-        #else
         if (Engine.gameType != GAME_SONICCD){
             RenderImage(0.0, -12.0, 8.0, 0.3, 0.3, 128.0, 128.0, 256.0, 256.0, 256.0, 256.0, 0xFF, self->texturePlayerSel);
         }
         else{
             RenderImage(88.0, 28.0, 8.0, 0.3, 0.3, 128.0, 128.0, 256.0, 256.0, 256.0, 256.0, 0xFF, self->texturePlayerSel);
         }
-        #endif
     }
-#if !RETRO_USE_V6
-    if (saveGame->tailsUnlocked)
-#else
-    if (saveGame->tailsUnlocked || saveGame->boxRegion)
-#endif
+    if (saveRAM[GET_IDX_SO(OFFSET_TAILSUNLOCKED)])
         SetRenderVertexColor(255, 255, 255);
     else
         SetRenderVertexColor(0, 0, 0);
-    #if !RETRO_USE_V6
-    RenderImage(0.0, -8.0, 8.0, 0.3, 0.3, 128.0, 128.0, 256.0, 256.0, 256.0, 0.0, 255, self->texturePlayerSel);
-    #else
     if (Engine.gameType != GAME_SONICCD){
         RenderImage(0.0, -8.0, 8.0, 0.3, 0.3, 128.0, 128.0, 256.0, 256.0, 256.0, 0.0, 255, self->texturePlayerSel);
     }
     else{
         RenderImage(88.0, 28.0, 8.0, 0.3, 0.3, 128.0, 128.0, 256.0, 256.0, 256.0, 0.0, 255, self->texturePlayerSel);
     }
-    #endif
-#if !RETRO_USE_V6
-    if (self->playerID == SAVESEL_KNUX && self->flag) {
-        SetRenderVertexColor(0, 128, 0);
-        if (usePhysicalControls) {
-            RenderImage(88.0, 28.0, 8.0, 0.325, 0.325, 128.0, 128.0, 256.0, 256.0, 256.0, 256.0, 0xFF, self->texturePlayerSel);
-        }
-        else {
-            RenderImage(88.0, 28.0, 8.0, 0.3, 0.3, 128.0, 128.0, 256.0, 256.0, 256.0, 256.0, 0xFF, self->texturePlayerSel);
-        }
-    }
-    else {
-        SetRenderVertexColor(0, 144, 0);
-        RenderImage(88.0, 28.0, 8.0, 0.3, 0.3, 128.0, 128.0, 256.0, 256.0, 256.0, 256.0, 0xFF, self->texturePlayerSel);
-    }
-#else
     if (Engine.gameType != GAME_SONICCD){
         if (self->playerID == SAVESEL_KNUX && self->flag) {
             SetRenderVertexColor(0, 128, 0);
@@ -485,32 +411,15 @@ void PlayerSelectScreen_Main(void *objPtr)
             RenderImage(88.0, 28.0, 8.0, 0.3, 0.3, 128.0, 128.0, 256.0, 256.0, 256.0, 256.0, 0xFF, self->texturePlayerSel);
         }
     }
-#endif
-#if !RETRO_USE_V6
-    if (saveGame->knuxUnlocked)
-        SetRenderVertexColor(0xFF, 0xFF, 0xFF);
-    else
-        SetRenderVertexColor(0, 0, 0);
-    RenderImage(88.0, 32.0, 8.0, 0.3, 0.3, 128.0, 128.0, 256.0, 256.0, 0.0, 256.0, 0xFF, self->texturePlayerSel);
-#else
     if (Engine.gameType != GAME_SONICCD){
-        if (saveGame->knuxUnlocked)
+        if (saveRAM[GET_IDX_SO(OFFSET_KNUXUNLOCKED)])
             SetRenderVertexColor(0xFF, 0xFF, 0xFF);
         else
             SetRenderVertexColor(0, 0, 0);
         RenderImage(88.0, 32.0, 8.0, 0.3, 0.3, 128.0, 128.0, 256.0, 256.0, 0.0, 256.0, 0xFF, self->texturePlayerSel);
     }
-#endif
-#if !RETRO_USE_V6
-    if (saveGame->tailsUnlocked) {
-#else
-    if (saveGame->tailsUnlocked || saveGame->boxRegion){
-#endif
-    #if !RETRO_USE_V6
-        if (self->playerID == SAVESEL_ST && self->flag) {
-    #else
+    if (saveRAM[GET_IDX_SO(OFFSET_TAILSUNLOCKED)]){
         if (self->playerID == SAVESEL_ST && Engine.gameType != GAME_SONICCD && self->flag) {
-    #endif
             SetRenderVertexColor(255, 64, 0);
             RenderImage(-88.0, -56.0, 8.0, 0.135, 0.135, 128.0, 128.0, 256.0, 256.0, 256.0, 256.0, 0xFF, self->texturePlayerSel);
             RenderRect(-96.0, -54.0, 8.0, 16.0, 4.0, 0xFF, 255, 0x40, 0xFF);
@@ -521,7 +430,6 @@ void PlayerSelectScreen_Main(void *objPtr)
             RenderRect(-90.0, -26.0, 8.0, 4.0, 10.0, 0xFF, 255, 0x40, 0xFF);
         }
         else {
-        #if RETRO_USE_V6
             if (Engine.gameType != GAME_SONICCD){
                 SetRenderVertexColor(255, 0, 0);
                 RenderImage(-88.0, -56.0, 8.0, 0.125, 0.125, 128.0, 128.0, 256.0, 256.0, 256.0, 256.0, 0xFF, self->texturePlayerSel);
@@ -532,16 +440,6 @@ void PlayerSelectScreen_Main(void *objPtr)
                 RenderRect(-68.0, -54.0, 8.0, 10.0, 4.0, 0xFF, 0xFF, 0xFF, 0xFF);
                 RenderRect(-90.0, -26.0, 8.0, 4.0, 10.0, 0xFF, 0xFF, 0xFF, 0xFF);
             }
-        #else
-            SetRenderVertexColor(255, 0, 0);
-            RenderImage(-88.0, -56.0, 8.0, 0.125, 0.125, 128.0, 128.0, 256.0, 256.0, 256.0, 256.0, 0xFF, self->texturePlayerSel);
-            RenderRect(-96.0, -54.0, 8.0, 16.0, 4.0, 0xFF, 0xFF, 0xFF, 0xFF);
-            RenderRect(-90.0, -48.0, 8.0, 4.0, 16.0, 0xFF, 0xFF, 0xFF, 0xFF);
-            RenderRect(-36.0, -54.0, 8.0, 10.0, 4.0, 0xFF, 0xFF, 0xFF, 0xFF);
-            RenderRect(-52.0, -54.0, 8.0, 10.0, 4.0, 0xFF, 0xFF, 0xFF, 0xFF);
-            RenderRect(-68.0, -54.0, 8.0, 10.0, 4.0, 0xFF, 0xFF, 0xFF, 0xFF);
-            RenderRect(-90.0, -26.0, 8.0, 4.0, 10.0, 0xFF, 0xFF, 0xFF, 0xFF);
-        #endif
         }
     }
     if ((self->playerID == SAVESEL_SONIC || self->playerID == SAVESEL_ST) && self->flag)
@@ -549,11 +447,7 @@ void PlayerSelectScreen_Main(void *objPtr)
     else
         SetRenderVertexColor(0xFF, 0xFF, 0xFF);
     RenderText(self->textSonic, FONT_TEXT, self->sonicX, -22.0, 8.0, 0.2, 255);
-#if !RETRO_USE_V6
-    if (saveGame->tailsUnlocked) {
-#else
-    if (saveGame->tailsUnlocked || saveGame->boxRegion){
-#endif
+    if (saveRAM[GET_IDX_SO(OFFSET_TAILSUNLOCKED)]){
         if ((self->playerID == SAVESEL_TAILS || self->playerID == SAVESEL_ST) && self->flag)
             SetRenderVertexColor(0xFF, 0xFF, 0x40);
         else
@@ -562,17 +456,13 @@ void PlayerSelectScreen_Main(void *objPtr)
     else {
         SetRenderVertexColor(0xA0, 0xA0, 0xA0);
     }
-#if !RETRO_USE_V6
-    RenderText(self->textTails, FONT_TEXT, self->tailsX, -64.0, 8.0, 0.2, 0xFF);
-#else
     if (Engine.gameType != GAME_SONICCD){
         RenderText(self->textTails, FONT_TEXT, self->tailsX, -64.0, 8.0, 0.2, 0xFF);
     }
     else{
         RenderText(self->textTails, FONT_TEXT, self->knuxX, -22.0, 8.0, 0.2, 0xFF);
     }
-#endif
-    if (saveGame->knuxUnlocked) {
+    if (saveRAM[GET_IDX_SO(OFFSET_KNUXUNLOCKED)]) {
         if (self->playerID == SAVESEL_KNUX && self->flag)
             SetRenderVertexColor(0xFF, 0xFF, 0x40);
         else
@@ -581,27 +471,14 @@ void PlayerSelectScreen_Main(void *objPtr)
     else {
         SetRenderVertexColor(0xA0, 0xA0, 0xA0);
     }
-#if !RETRO_USE_V6
-    RenderText(self->textKnux, FONT_TEXT, self->knuxX, -22.0, 8.0, 0.2, 0xFF);
-#else
     if (Engine.gameType != GAME_SONICCD){
         RenderText(self->textKnux, FONT_TEXT, self->knuxX, -22.0, 8.0, 0.2, 0xFF);
     }
-#endif
 
     NewRenderState();
     SetRenderMatrix(NULL);
     SetRenderVertexColor(0xFF, 0xFF, 0xFF);
 
-#if !RETRO_USE_V6
-    if (self->backPressed){
-        RenderImage(128.0, -92.0, 160.0, 0.3, 0.3, 64.0, 64.0, 128.0, 128.0, 128.0, 128.0, self->alpha, self->textureArrows);
-
-    }
-    else{
-        RenderImage(128.0, -92.0, 160.0, 0.3, 0.3, 64.0, 64.0, 128.0, 128.0, 128.0, 0.0, self->alpha, self->textureArrows);
-    }
-#else
     if (Engine.gameDeviceType == RETRO_MOBILE){
         if (self->backPressed){
             RenderImage(128.0, -92.0, 160.0, 0.3, 0.3, 64.0, 64.0, 128.0, 128.0, 128.0, 128.0, self->alpha, self->textureArrows);
@@ -611,5 +488,4 @@ void PlayerSelectScreen_Main(void *objPtr)
             RenderImage(128.0, -92.0, 160.0, 0.3, 0.3, 64.0, 64.0, 128.0, 128.0, 128.0, 0.0, self->alpha, self->textureArrows);
         }
     }
-#endif
 }

@@ -19,9 +19,9 @@ struct NativeEntity_OptionsButton : NativeEntityBase {
     MatrixF renderMatrix;
     MatrixF matrix2;
     NativeEntity_TextLabel *labelPtr;
-#if RETRO_USE_V6
+
     int alpha;
-#endif
+
 };
 
 void OptionsButton_Create(void *objPtr);

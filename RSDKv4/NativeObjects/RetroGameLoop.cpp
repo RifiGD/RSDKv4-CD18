@@ -1,14 +1,5 @@
 #include "RetroEngine.hpp"
 
-#if !RETRO_USE_V6
-void InitPauseMenu()
-{
-    PauseSound();
-    ClearNativeObjects();
-    CREATE_ENTITY(MenuBG);
-    CREATE_ENTITY(PauseMenu);
-}
-#else
 void InitPauseMenu()
 {   
 #if RETRO_USE_ORIGINAL_CODE
@@ -21,9 +12,7 @@ void InitPauseMenu()
     CREATE_ENTITY(PauseMenu);
 #endif
 }
-#endif
 
-#if RETRO_USE_V6
 void showPauseScreenJava()
 {
     //it's Java sided, i'm not even gonna bother with this
@@ -103,7 +92,7 @@ bool restartBtnUnAvailable()
 
     return true;
 }
-#endif
+
 
 void RetroGameLoop_Create(void *objPtr) { mixFiltersOnJekyll = Engine.useHighResAssets; }
 void RetroGameLoop_Main(void *objPtr)
@@ -203,13 +192,11 @@ void RetroGameLoop_Main(void *objPtr)
 #endif
             break;
         
-#if RETRO_USE_V6
         case ENGINE_INITJAVAPAUSE: //new gameMode state in RSDKv6
         eventPauseMenuVisible(true, 0);
         showPauseScreenJava();
-        Engine.gameMode = 5; 
+        Engine.gameMode = ENGINE_INITPAUSE;
         return;
-#endif
 
 #if !RETRO_USE_ORIGINAL_CODE && RETRO_USE_NETWORKING
         case ENGINE_CONNECT2PVS: {

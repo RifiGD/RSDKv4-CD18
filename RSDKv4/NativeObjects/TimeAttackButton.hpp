@@ -19,9 +19,9 @@ struct NativeEntity_TimeAttackButton : NativeEntityBase {
     MatrixF renderMatrix;
     MatrixF matrixTemp;
     NativeEntity_TextLabel *labelPtr;
-#if RETRO_USE_V6
+
     int alpha;
-#endif
+
     MeshAnimator animator;
 };
 

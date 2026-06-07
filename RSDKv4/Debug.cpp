@@ -223,12 +223,7 @@ void ProcessStageSelect()
 
             int count = 15;
 
-#if RETRO_USE_V6 && RETRO_USE_ORIGINAL_CODE
-            // now only start game and stage select, accurate to the dev menu
-            // added as original code as well since it isnt exclusive to v6
-            // it is just how the dev menu behaves on original releases
-            count = 9;
-#endif
+
 
 #if RETRO_USE_MOD_LOADER
             count += 2;
@@ -278,11 +273,8 @@ void ProcessStageSelect()
                     else {
 #endif
 
-#if !RETRO_USE_V6
-                        CREATE_ENTITY(SegaSplash);
-#else
                         CREATE_ENTITY(CWSplash);
-#endif
+
 
 #if !RETRO_USE_ORIGINAL_CODE
                     }
@@ -611,15 +603,9 @@ void SetTextMenu(int sm)
             StrAdd(version, " Version");
             AddTextMenuEntry(&gameMenu[0], version);
             AddTextMenuEntry(&gameMenu[0], Engine.gameVersion);
-#ifdef RETRO_DEV_EXTRA
-#if !RETRO_USE_V6
-            AddTextMenuEntry(&gameMenu[0], RETRO_DEV_EXTRA);
-#else
+
             AddTextMenuEntry(&gameMenu[0], " ");
-#endif
-#else
-            AddTextMenuEntry(&gameMenu[0], " ");
-#endif
+
             AddTextMenuEntry(&gameMenu[0], " ");
             AddTextMenuEntry(&gameMenu[0], " ");
             AddTextMenuEntry(&gameMenu[0], " ");
@@ -628,7 +614,7 @@ void SetTextMenu(int sm)
             AddTextMenuEntry(&gameMenu[0], " ");
             AddTextMenuEntry(&gameMenu[0], "STAGE SELECT");
 
-#if !RETRO_USE_ORIGINAL_CODE || !RETRO_USE_V6
+#if !RETRO_USE_ORIGINAL_CODE
             AddTextMenuEntry(&gameMenu[0], " ");
             AddTextMenuEntry(&gameMenu[0], "START MENU");
 #if RETRO_USE_MOD_LOADER

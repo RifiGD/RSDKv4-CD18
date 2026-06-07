@@ -385,115 +385,99 @@ void InitNativeObjectSystem()
 
     ReadSaveRAMData();
 
-    SaveGame *saveGame = (SaveGame *)saveRAM;
-    if (!saveGame->saveInitialized) {
-        saveGame->saveInitialized = true;
-        saveGame->musVolume       = MAX_VOLUME;
-        saveGame->sfxVolume       = MAX_VOLUME;
-        saveGame->spindashEnabled = true;
-    #if !RETRO_USE_V6
-        saveGame->boxRegion       = 0;
-        saveGame->vDPadSize       = 64;
-        saveGame->vDPadOpacity    = 160;
-        saveGame->vDPadX_Move     = 56;
-        saveGame->vDPadY_Move     = 184;
-        saveGame->vDPadX_Jump     = -56;
-        saveGame->vDPadY_Jump     = 188;
-    #else
+    // SaveGame *saveGame = (SaveGame *)saveRAM;
+    if (!saveRAM[SAVE_INIT]) {
+        
+        saveRAM[SAVE_INIT]         = true;
+        saveRAM[SAVE_MUSVOL]       = MAX_VOLUME;
+        saveRAM[SAVE_SFXVOL]       = MAX_VOLUME;
+        saveRAM[SAVE_SPINDASH]     = true;
+
         // offsets :O
         if (Engine.gameType != GAME_SONICCD)
         {
-            saveGame->boxRegion       = 0;
-            saveGame->vDPadSize       = 64;
-            saveGame->vDPadOpacity    = 160;
-            saveGame->vDPadX_Move     = 56;
-            saveGame->vDPadY_Move     = 184;
-            saveGame->vDPadX_Jump     = -56;
-            saveGame->vDPadY_Jump     = 188;
+            saveRAM[SAVE_BOXREGION]       = 0;
+            saveRAM[SAVE_VDPADSIZE]       = 64;
+            saveRAM[SAVE_VDPADOPACITY]    = 160;
+            saveRAM[SAVE_VDPADX_MOVE]     = 56;
+            saveRAM[SAVE_VDPADY_MOVE]     = 184;
+            saveRAM[SAVE_VDPADX_JUMP]     = -56;
+            saveRAM[SAVE_VDPADY_JUMP]     = 188;
         }
         else
         {
         // this is... weird but it's from the binary i guess
         // the offsets are all set to 4000 if it is sonic cd
-            saveGame->initialSaveOffset    = 0;
-            saveGame->initialSaveOffset    = 64;
-            saveGame->initialSaveOffset    = 160;
-            saveGame->initialSaveOffset    = 56;
-            saveGame->initialSaveOffset    = 184;
-            saveGame->initialSaveOffset    = -56;
-            saveGame->initialSaveOffset    = 188;
+            saveRAM[SAVE_INITIALOFFSET]    = 0;
+            saveRAM[SAVE_INITIALOFFSET]    = 64;
+            saveRAM[SAVE_INITIALOFFSET]    = 160;
+            saveRAM[SAVE_INITIALOFFSET]    = 56;
+            saveRAM[SAVE_INITIALOFFSET]    = 184;
+            saveRAM[SAVE_INITIALOFFSET]    = -56;
+            saveRAM[SAVE_INITIALOFFSET]    = 188;
         }
-    #endif
-    #if !RETRO_USE_V6
-        saveGame->tailsUnlocked   = Engine.gameType != GAME_SONIC1;
-        saveGame->knuxUnlocked    = Engine.gameType != GAME_SONIC1;
-    #else
+
+        saveRAM[SAVE_TAILSUNLOCKED]   = Engine.gameType != GAME_SONIC1;
+        saveRAM[SAVE_KNUXUNLOCKED]    = Engine.gameType != GAME_SONIC1;
+
     if (Engine.gameType == GAME_SONIC1){
-        saveGame->tailsUnlocked   = Engine.gameType != GAME_SONIC1;
-        saveGame->knuxUnlocked    = Engine.gameType != GAME_SONIC1;
+        saveRAM[SAVE_TAILSUNLOCKED]   = Engine.gameType != GAME_SONIC1;
+        saveRAM[SAVE_KNUXUNLOCKED]    = Engine.gameType != GAME_SONIC1;
     }
-    else if (Engine.gameType == GAME_SONICCD)
-        saveGame->boxRegion = false; // tailsUnlocked for CD
-        saveGame->initialSaveOffset = false;
-    #endif
-        saveGame->unlockedActs    = 0;
+    else if (Engine.gameType == GAME_SONICCD){
+        saveRAM[SAVE_BOXREGION] = false; // tailsUnlocked for CD
+        saveRAM[SAVE_INITIALOFFSET] = false;
+    }
+    
+        saveRAM[SAVE_UNLOCKEDACTS]    = 0;
         WriteSaveRAMData();
     }
 #if !RETRO_USE_ORIGINAL_CODE
     else if (Engine.gameType == GAME_SONIC2) {
         // ensure tails and knuckles are unlocked in sonic 2
         // they weren't automatically unlocked in older versions of the decomp
-        saveGame->tailsUnlocked = true;
-        saveGame->knuxUnlocked  = true;
+        saveRAM[SAVE_TAILSUNLOCKED] = true;
+        saveRAM[SAVE_KNUXUNLOCKED]  = true;
         WriteSaveRAMData();
     }
 #endif
-    saveGame->musVolume = bgmVolume;
-    saveGame->sfxVolume = sfxVolume;
+    saveRAM[SAVE_MUSVOL] = bgmVolume;
+    saveRAM[SAVE_SFXVOL] = sfxVolume;
 
-    if (!saveGame->musVolume)
+    if (!saveRAM[SAVE_MUSVOL])
         musicEnabled = false;
-#if !RETRO_USE_V6
-    if (!saveGame->vDPadX_Move) {
-        saveGame->vDPadX_Move = 60;
-        saveGame->vDPadY_Move = 176;
-        saveGame->vDPadX_Jump = -56;
-        saveGame->vDPadY_Jump = 180;
-    }
-#else
+
     if (Engine.gameType != GAME_SONICCD)
     {
-        if (!saveGame->vDPadX_Move) {
-            saveGame->vDPadX_Move = 60;
-            saveGame->vDPadY_Move = 176;
-            saveGame->vDPadX_Jump = -56;
-            saveGame->vDPadY_Jump = 180;
+        if (!saveRAM[SAVE_VDPADX_MOVE]) {
+            saveRAM[SAVE_VDPADX_MOVE]    = 60;
+            saveRAM[SAVE_VDPADY_MOVE]    = 176;
+            saveRAM[SAVE_VDPADX_JUMP]    = -56;
+            saveRAM[SAVE_VDPADY_JUMP]    = 180;
         }
     }
     else
     {
-        if (!saveGame->initialSaveOffset) {
-            saveGame->initialSaveOffset = 60;
-            saveGame->initialSaveOffset = 176;
-            saveGame->initialSaveOffset = -56;
-            saveGame->initialSaveOffset = 180;
+        if (!saveRAM[SAVE_INITIALOFFSET]) {
+            saveRAM[SAVE_INITIALOFFSET] = 60;
+            saveRAM[SAVE_INITIALOFFSET] = 176;
+            saveRAM[SAVE_INITIALOFFSET] = -56;
+            saveRAM[SAVE_INITIALOFFSET] = 180;
         }
     }    
-#endif
+
 
     // forgot this my bad broski
-#if !RETRO_USE_V6
-    Engine.globalBoxRegion = saveGame->boxRegion;
-#else
+
     if (Engine.gameType != GAME_SONICCD)
-            Engine.globalBoxRegion = saveGame->boxRegion;
+            Engine.globalBoxRegion = saveRAM[SAVE_BOXREGION];
     else
         // Looking through the Ghidra Code...
-        // saveGame->boxRegion actually never gets written
+        // saveRAM[SAVE_BOXREGION] actually never gets written for Sonic CD
         // and with the way the logic is written, it'll always force REGION_JP
             Engine.globalBoxRegion = REGION_JP;
-#endif
-    SetGameVolumes(saveGame->musVolume, saveGame->sfxVolume);
+
+    SetGameVolumes(saveRAM[SAVE_MUSVOL], saveRAM[SAVE_SFXVOL]);
 #if !RETRO_USE_ORIGINAL_CODE
     if (skipStartMenu) {
         CREATE_ENTITY(RetroGameLoop);
@@ -502,11 +486,8 @@ void InitNativeObjectSystem()
     }
     else
 #endif
-#if !RETRO_USE_V6
-        CREATE_ENTITY(SegaSplash);
-#else
         CREATE_ENTITY(CWSplash);
-#endif
+
 }
 NativeEntity *CreateNativeObject(void (*create)(void *objPtr), void (*main)(void *objPtr))
 {

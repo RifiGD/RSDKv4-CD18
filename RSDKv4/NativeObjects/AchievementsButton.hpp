@@ -19,9 +19,9 @@ struct NativeEntity_AchievementsButton : NativeEntityBase {
     MatrixF renderMatrix;
     MatrixF matrixTemp;
     NativeEntity_TextLabel *labelPtr;
-#if RETRO_USE_V6
+
     int alpha;
-#endif
+
 };
 
 void AchievementsButton_Create(void *objPtr);

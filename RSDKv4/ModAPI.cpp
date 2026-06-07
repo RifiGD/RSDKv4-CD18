@@ -428,11 +428,11 @@ void RefreshEngine()
     if (strstr(Engine.gameWindowText, "Sonic 1") || Engine.forceSonic1) {
         Engine.gameType = GAME_SONIC1;
     }
-#if RETRO_USE_V6
+
     else if (strstr(Engine.gameWindowText, "Sonic CD")){
         Engine.gameType = GAME_SONICCD;
     }
-#endif
+
 
     achievementCount = 0;
     if (Engine.gameType == GAME_SONIC1) {
@@ -464,7 +464,7 @@ void RefreshEngine()
         AddAchievement("Scrambled Egg", "Defeat Dr. Eggman's Boss\rAttack mode in under 7\rminutes");
         AddAchievement("Beat the Clock", "Complete the Time Attack\rmode in less than 45\rminutes");
     }
-#if RETRO_USE_V6
+
     // These achievements are defined in the strings.xml file inside the APK...
     // However, they go unused. The FTVP Menu doesn't even have an achievements section,
     // the RSDK HW Menu doesn't create the Achievements Button,
@@ -483,7 +483,7 @@ void RefreshEngine()
         AddAchievement("Just in Time!", "Complete the Time Attack\rmode in under 25\rminutes");
         AddAchievement("Savior of the Planet", "Destroy all the robot\rtransporters and Metal\rSonic holograms in the past");
     }
-#endif
+
 
     SaveMods();
 

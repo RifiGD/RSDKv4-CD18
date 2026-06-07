@@ -1,6 +1,5 @@
 #include "RetroEngine.hpp"
 
-#if RETRO_USE_V6
 void loadTextureAll()
 {
     // Load all textures, because it skips the Title Screen (and in the decomp, skips SegaSplash, which also loads the texture like the Title Screen)
@@ -89,7 +88,6 @@ void loadTextureAll()
     LoadTexture("Data/Game/Menu/PlayerSelect.png", TEXFMT_RGBA8888);
     LoadTexture("Data/Game/Menu/SegaID.png", TEXFMT_RGBA8888);
 }
-#endif
 
 void CWSplash_Create(void *objPtr)
 {
@@ -99,40 +97,6 @@ void CWSplash_Create(void *objPtr)
     self->textureID = LoadTexture("Data/Game/Menu/CWLogo.png", TEXFMT_RGBA8888);
 }
 
-#if ! RETRO_USE_V6
-void CWSplash_Main(void *objPtr)
-{
-    RSDK_THIS(CWSplash);
-
-    switch (self->state) {
-        case CWSPLASH_STATE_ENTER:
-            self->rectAlpha -= 300.0 * Engine.deltaTime;
-            if (self->rectAlpha < -320.0){
-                self->state = CWSPLASH_STATE_EXIT;
-
-            }
-            SetRenderBlendMode(RENDER_BLEND_ALPHA);
-            RenderRect(-SCREEN_CENTERX_F, SCREEN_CENTERY_F, 160.0, SCREEN_XSIZE_F, SCREEN_YSIZE_F, 0xFF, 0x90, 0x00, 0xFF);
-            SetRenderBlendMode(RENDER_BLEND_ALPHA);
-            RenderImage(0.0, 0.0, 160.0, 0.25, 0.25, 512.0, 256.0, 1024.0, 512.0, 0.0, 0.0, 255, self->textureID);
-            RenderRect(-SCREEN_CENTERX_F, SCREEN_CENTERY_F, 160.0, SCREEN_XSIZE_F, SCREEN_YSIZE_F, 0, 0, 0, self->rectAlpha);
-            break;
-        case CWSPLASH_STATE_EXIT:
-            self->rectAlpha += 300.0 * Engine.deltaTime;
-            if (self->rectAlpha > 512.0)
-                self->state = CWSPLASH_STATE_SPAWNTITLE;
-            SetRenderBlendMode(RENDER_BLEND_ALPHA);
-            RenderRect(-SCREEN_CENTERX_F, SCREEN_CENTERY_F, 160.0, SCREEN_XSIZE_F, SCREEN_YSIZE_F, 0xFF, 0x90, 0x00, 0xFF);
-            SetRenderBlendMode(RENDER_BLEND_ALPHA);
-            RenderImage(0.0, 0.0, 160.0, 0.25, 0.25, 512.0, 256.0, 1024.0, 512.0, 0.0, 0.0, 255, self->textureID);
-            RenderRect(-SCREEN_CENTERX_F, SCREEN_CENTERY_F, 160.0, SCREEN_XSIZE_F, SCREEN_YSIZE_F, 0, 0, 0, self->rectAlpha);
-            break;
-
-        case CWSPLASH_STATE_SPAWNTITLE: ResetNativeObject(self, TitleScreen_Create, TitleScreen_Main); break;
-
-    }
-}
-#else
 void CWSplash_Main(void *objPtr)
 {
     RSDK_THIS(CWSplash);
@@ -163,4 +127,3 @@ void CWSplash_Main(void *objPtr)
     RenderRect(-SCREEN_CENTERX_F, SCREEN_CENTERY_F, 160.0, SCREEN_XSIZE_F, SCREEN_YSIZE_F, 0, 0, 0, self->rectAlpha);
     return;
 }
-#endif

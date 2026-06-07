@@ -4,11 +4,6 @@
 // Disables POSIX use c++ name blah blah stuff
 #pragma warning(disable : 4996)
 
-// Whether or not the HW Menus will use the version used in SEGA Classics (2018) application for Amazon Fire TV
-#ifndef RETRO_USE_V6
-#define RETRO_USE_V6 (1)
-#endif
-
 // Setting this to true removes (almost) ALL changes from the original code, the trade off is that a playable game cannot be built, it is advised to
 // be set to true only for preservation purposes
 #ifndef RETRO_USE_ORIGINAL_CODE
@@ -21,7 +16,7 @@
 
 #ifndef RETRO_USE_NETWORKING
 //v6 smali code disables networking
-#define RETRO_USE_NETWORKING (!RETRO_USE_ORIGINAL_CODE && !RETRO_USE_V6 && 1)
+#define RETRO_USE_NETWORKING (!RETRO_USE_ORIGINAL_CODE && 0)
 #endif
 
 // Forces all DLC flags to be disabled, this should be enabled in any public releases
@@ -208,7 +203,7 @@ typedef unsigned int uint;
 #endif
 #endif
 
-#define RETRO_USE_HAPTICS (!RETRO_USE_V6 && 1)
+#define RETRO_USE_HAPTICS (0)
 
 // NOTE: This is only used for rev00 stuff, it was removed in rev01 and later builds
 #if RETRO_PLATFORM <= RETRO_WP7
@@ -228,11 +223,7 @@ typedef unsigned int uint;
 
 // Determines which revision to use (see defines below for specifics). Datafiles from REV00 and REV01 builds will not work on later revisions and vice versa.
 #ifndef RSDK_REVISION
-#if !RETRO_USE_V6
-#define RSDK_REVISION (3) // set it your own here, defaults to Origins
-#else
 #define RSDK_REVISION (2) // force REV02
-#endif
 #endif
 
 // Revision from early versions of Sonic 1
@@ -283,10 +274,9 @@ enum RetroStates {
     ENGINE_ENDGAME     = 7,
     ENGINE_RESETGAME   = 8,
 
-#if RETRO_USE_V6
     // New engine state in RSDKv6
     ENGINE_INITJAVAPAUSE = 9, // The pause menu for SEGA Classics uses a Java interface.
-#endif
+
 #if !RETRO_USE_ORIGINAL_CODE && RETRO_USE_NETWORKING
     // Custom GameModes (required to make some features work)
     ENGINE_CONNECT2PVS = 0x80,
@@ -298,23 +288,16 @@ enum RetroStates {
 };
 
 enum RetroGameType {
-#if !RETRO_USE_V6
-    GAME_UNKNOWN = 0,
-    GAME_SONIC1  = 1,
-    GAME_SONIC2  = 2,
-#else
     // GetSonic() and sonicType enum in SonicBaseActivity.java
     GAME_SONIC1  = 0, 
     GAME_SONIC2  = 1, 
     GAME_SONICCD = 2, 
     GAME_UNKNOWN = 3, // kept for compatibility with the decompilation
-#endif
 };
 
-#if RETRO_USE_V6
 // in SonicBaseActivity.java, inside InitActivity(), RetroEngine.setDeviceType(0) is called
 #define RETRO_GAMEPLATFORM (RETRO_STANDARD)
-#endif
+
 // General Defines
 #define SCREEN_YSIZE   (240)
 #define SCREEN_CENTERY (SCREEN_YSIZE / 2)
@@ -416,11 +399,9 @@ public:
     bool nativeMenuFadeIn = false;
 
     bool trialMode        = false;
-#if !RETRO_USE_V6
-    bool onlineActive     = true;
-#else
+
     bool onlineActive     = false;
-#endif
+
     bool useHighResAssets = false;
 #if RETRO_USE_HAPTICS
     bool hapticsEnabled = true;
@@ -477,19 +458,10 @@ public:
     char gameWindowText[0x40];
     char gameDescriptionText[0x100];
 #ifdef DECOMP_VERSION
-#if !RETRO_USE_V6
-    const char *gameVersion = DECOMP_VERSION;
-#else
     const char *gameVersion  = "0.4.3";
-#endif
-
-#else
-#if !RETRO_USE_V6
-    const char *gameVersion  = "1.3.3";
 #else
     // Sega Classics App version
     const char *gameVersion  = "0.4.3";
-#endif
 #endif
     const char *gamePlatform = nullptr;
 

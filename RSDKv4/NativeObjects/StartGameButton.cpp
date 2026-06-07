@@ -1,6 +1,5 @@
 #include "RetroEngine.hpp"
 
-#if RETRO_USE_V6
 void loadCartridgeValue(void *objPtr)
 {
     RSDK_THIS(StartGameButton);
@@ -52,32 +51,14 @@ void loadCartridgeValue(void *objPtr)
         self->prevRegion = Engine.globalBoxRegion;
     }
 }
-#endif
+
 void StartGameButton_Create(void *objPtr)
 {
     RSDK_THIS(StartGameButton);
     self->textureCircle = LoadTexture("Data/Game/Menu/Circle.png", TEXFMT_RGBA4444);
-#if RETRO_USE_V6
+
     loadCartridgeValue(objPtr);
-#else
-    int package = 0;
-    switch (Engine.globalBoxRegion) {
-        case REGION_JP:
-            package        = LoadTexture("Data/Game/Models/Package_JP.png", TEXFMT_RGBA5551);
-            self->meshCart = LoadMesh("Data/Game/Models/JPCartridge.bin", package);
-            break;
 
-        case REGION_US:
-            package        = LoadTexture("Data/Game/Models/Package_US.png", TEXFMT_RGBA5551);
-            self->meshCart = LoadMesh("Data/Game/Models/Cartridge.bin", package);
-            break;
-
-        case REGION_EU:
-            package        = LoadTexture("Data/Game/Models/Package_EU.png", TEXFMT_RGBA5551);
-            self->meshCart = LoadMesh("Data/Game/Models/Cartridge.bin", package);
-            break;
-    }
-#endif
     self->prevRegion       = Engine.globalBoxRegion;
     self->x                = 0.0;
     self->y                = 16.0;
@@ -85,9 +66,9 @@ void StartGameButton_Create(void *objPtr)
     self->r                = 0xFF;
     self->g                = 0xFF;
     self->b                = 0x00;
-#if RETRO_USE_V6
+
     self->alpha            = 255;
-#endif
+
     self->labelPtr         = CREATE_ENTITY(TextLabel);
     self->labelPtr->fontID = FONT_HEADING;
     self->labelPtr->scale  = 0.15;
@@ -100,26 +81,9 @@ void StartGameButton_Main(void *objPtr)
 {
     RSDK_THIS(StartGameButton);
     if (self->prevRegion != Engine.globalBoxRegion) {
-    #if !RETRO_USE_V6
-        int package = 0;
-        switch (Engine.globalBoxRegion) {
-            case REGION_JP:
-                package        = LoadTexture("Data/Game/Models/Package_JP.png", TEXFMT_RGBA5551);
-                self->meshCart = LoadMesh("Data/Game/Models/JPCartridge.bin", package);
-                break;
-            case REGION_US:
-                package        = LoadTexture("Data/Game/Models/Package_US.png", TEXFMT_RGBA5551);
-                self->meshCart = LoadMesh("Data/Game/Models/Cartridge.bin", package);
-                break;
-            case REGION_EU:
-                package        = LoadTexture("Data/Game/Models/Package_EU.png", TEXFMT_RGBA5551);
-                self->meshCart = LoadMesh("Data/Game/Models/Cartridge.bin", package);
-                break;
-        }
-        self->prevRegion = Engine.globalBoxRegion;
-    #else
+
         loadCartridgeValue(objPtr);
-    #endif
+
     }
 
     if (self->visible) {
@@ -130,11 +94,9 @@ void StartGameButton_Main(void *objPtr)
         }
         SetRenderBlendMode(RENDER_BLEND_ALPHA);
         SetRenderVertexColor(self->r, self->g, self->b);
-    #if !RETRO_USE_V6
-        RenderImage(self->x, self->y, self->z, self->scale, self->scale, 256.0, 256.0, 512.0, 512.0, 0.0, 0.0, 255, self->textureCircle);
-    #else
+
         RenderImage(self->x, self->y, self->z, self->scale, self->scale, 256.0, 256.0, 512.0, 512.0, 0.0, 0.0, self->alpha, self->textureCircle);
-    #endif
+
         SetRenderVertexColor(0xFF, 0xFF, 0xFF);
         SetRenderBlendMode(RENDER_BLEND_NONE);
 

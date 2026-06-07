@@ -1,10 +1,6 @@
 #ifndef INPUT_H
 #define INPUT_H
 
-#if RETRO_USE_V6
-void ClearTouches();
-#endif
-
 enum InputButtons {
     INPUT_UP,
     INPUT_DOWN,
