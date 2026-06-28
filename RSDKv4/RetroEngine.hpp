@@ -352,8 +352,6 @@ extern bool engineDebugMode;
 #include "Userdata.hpp"
 #include "Debug.hpp"
 #include "ModAPI.hpp"
-
-// not under a v6 flag cuz i changed the cmakelists file so im lowk scared
 #include "Video.hpp"
 
 // Native Entities

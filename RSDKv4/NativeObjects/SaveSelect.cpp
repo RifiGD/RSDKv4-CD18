@@ -268,7 +268,6 @@ void SaveSelect_Main(void *objPtr)
                     else if (!self->saveButtons[i]->b) {
                         self->selectedButton = i;
                         if (self->state == SAVESELECT_STATE_MAIN_DELETING) {
-                            // if (Engine.gameType != GAME_SONICCD){
                                 if (self->selectedButton > SAVESELECT_BUTTON_NOSAVE && saveRAM[((self->selectedButton - 1) * 8) + GET_IDX_SO(SAVEFILE_STAGEID)] > 0) {
                                     PlaySfxByName("Menu Select", false);
                                     PlaySfxByName("Select", false);
